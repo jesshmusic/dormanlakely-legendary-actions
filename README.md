@@ -1,42 +1,49 @@
-![Latest Release Download Count](https://img.shields.io/badge/dynamic/json?color=blue&label=Downloads%40latest&query=assets%5B1%5D.download_count&url=https%3A%2F%2Fapi.github.com%2Frepos%2Fvtt-lair%2Fsimbuls-creature-aide%2Freleases%2Flatest) [![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fsimbuls-creature-aide&colorB=4aa94a)](https://forge-vtt.com/bazaar#package=simbuls-creature-aide) 
+[![Latest Release](https://img.shields.io/github/v/release/jesshmusic/dormanlakely-legendary-actions?label=Latest%20Release)](https://github.com/jesshmusic/dormanlakely-legendary-actions/releases/latest)
+[![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Installs&query=package.installs&suffix=%25&url=https%3A%2F%2Fforge-vtt.com%2Fapi%2Fbazaar%2Fpackage%2Fdormanlakely-legendary-actions&colorB=4aa94a)](https://forge-vtt.com/bazaar#package=dormanlakely-legendary-actions)
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/N4N36ZSPQ)
 
-# Simbul's Creature Aide
-A Foundry VTT module that gives the GM the ability to:
-## Legendary Actions
-  - Prompts GM with available legendary actions in-between combatant turns. 
-  - Tracks current available uses of legendary actions.
-  - And reset the used legendary actions to their max on the end of their turn in combat.
-    - Note: RAW indicates this should be at the beginning of their turn, but due to timing issues with the legendary action helper, this has been moved to the end of the turn and has no mechanical effect on gameplay.
-    
-## Lair Actions
-  - Prompts GM with available Lair actions at the creature's designated lair initiative.
-- A creature's legendary and lair actions will be indexed when first added to the tracker. Only items with an activation cost of "Legendary Action" or "Lair Action" will be indexed.
+# Dorman Lakely's Legendary Actions
 
-## Recharge Abilities for GM's
-  - At either start or end of the turn.
-  - For abilities with a "d6 recharge" on every turn.
-  - Configurable to hide the roll.
+A FoundryVTT module for **D&D 5e** that automates legendary action management during combat. At the end of each combatant's turn, the GM is prompted with a dialog showing every creature in the encounter that has legendary actions available — so nothing gets forgotten mid-fight.
 
-## Automatic Regeneration
-  - Automatically checks actors with the Regeneration or Self-Repair features
-  - Searches the these features for the phrase "X hit points", where X can be a static value or a dice formula
-    - The search phrase is localized for your supported language.
-  - At the start of their turn, if the actor isn't full health it prompts the GM for a roll for the regen and auto applies the healing
-  ![image](https://user-images.githubusercontent.com/33215552/196030513-eb83309b-4c22-4960-9318-d1988b7f4c62.png)
+## Features
 
-  - Regeneration Blocking
-    - Feature to prevent the auto regen popup
-    - Matches and active effect of the specified name (case specific)
-  ![image](https://user-images.githubusercontent.com/33215552/196030495-5758a842-f651-43f9-9816-3d9a23d40864.png)
+- Prompts the GM with available legendary actions at the end of each combatant's turn
+- Shows remaining legendary action uses (e.g. `[3/3]`) alongside each action
+- Filters out dead creatures (0 HP) and creatures with no remaining legendary actions
+- Legendary action recharge is handled natively by the dnd5e system
 
-## Undead Fortitude
-  - Automatically checks actors with the Undead Fortitude feature or the trait set under special traits.
-  - When they are reduced to 0 hp it will prompt the GM to choose the type of damage that was applied.
-  - Then prompts the GM for a Con save for that actor, and will auto heal the NPC if the roll beats the save needed.
-  - There are two settings for levels of checks:
-    - Quick saves will just measure the change in hp and will not measure "overkill".
-    - Advanced saves will query the GM for the amount of damage taken (defaulted to the amount of damage the token received) as a more complex system.
+## Legendary Action Dialog
 
-Originally part of [DnD 5e Helpers](https://github.com/trioderegion/dnd5e-helpers)
+![Legendary Action Dialog](images/legendary-action-dialog.png)
+
+Each creature with available legendary actions appears in the dialog. Clicking an action executes it and decrements the legendary action counter automatically.
+
+## Requirements
+
+- FoundryVTT v13+
+- D&D 5e system v4.0+
+
+## Settings
+
+Found under **Settings → Module Settings → Dorman Lakely's Legendary Actions**:
+
+| Setting | Default | Description |
+|---|---|---|
+| Legendary Action Prompt | On | Show the legendary action dialog at the end of each combatant's turn |
+| Extended debug output | Off | Log additional debugging information to the browser console |
+
+## Development
+
+```bash
+npm install       # Install dependencies
+npm run build     # Compile TypeScript → dist/main.js
+npm run dev       # Watch mode (rebuilds on file change)
+npm test          # Run unit tests
+npm test -- --coverage  # Run tests with coverage report
+```
+
+## Credits
+
+Originally derived from [Simbul's Creature Aide](https://github.com/vtt-lair/simbuls-creature-aide), stripped down to legendary actions only and rewritten in TypeScript for Foundry v13 / dnd5e v4.
