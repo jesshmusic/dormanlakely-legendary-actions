@@ -7,3 +7,6 @@
 
 # Simbul's Creature Aide
 - vtt-lair (wdohse@gmail.com)
+
+# Dorman Lakely's Legendary Actions
+- jesshmusic 
