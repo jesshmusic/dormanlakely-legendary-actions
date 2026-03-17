@@ -2,8 +2,11 @@
     "id": "dormanlakely-legendary-actions",
     "name": "dormanlakely-legendary-actions",
     "title": "Dorman Lakely's Legendary Actions",
-    "description": "Manages Legendary Action economy for dnd5e. Prompts the GM for legendary action use at the end of each combatant's turn, and optionally recharges legendary actions at the start of a creature's turn.",
+    "description": "Manages Legendary Action economy for dnd5e. Prompts the GM with available legendary actions at the end of each combatant's turn.",
     "version": "1.0.0",
+    "url": "https://github.com/jesshmusic/dormanlakely-legendary-actions",
+    "manifest": "https://github.com/jesshmusic/dormanlakely-legendary-actions/releases/latest/download/module.json",
+    "download": "https://github.com/jesshmusic/dormanlakely-legendary-actions/releases/download/v1.0.0/module.zip",
     "authors": [
         {
             "name": "jesshmusic",
