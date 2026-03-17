@@ -1,0 +1,261 @@
+/**
+ * Simbul's Creature Aide - Foundry v13 Compatible Styles
+ * Updated to use v13 design tokens and CSS custom properties
+ */
+
+/* ===== CSS Variables for v13 Compatibility ===== */
+:root {
+    --sca-button-bg: var(--color-cool-4, #374151);
+    --sca-button-hover: var(--color-cool-3, #4b5563);
+    --sca-button-active: var(--color-cool-2, #6b7280);
+    --sca-text-primary: var(--color-text-primary, #f0f0e0);
+    --sca-text-secondary: var(--color-text-secondary, #b5b3a4);
+    --sca-border: var(--color-border-light, #7a7971);
+    --sca-border-radius: var(--border-radius, 3px);
+    --sca-tooltip-bg: var(--color-bg-tooltip, rgba(0, 0, 0, 0.9));
+    --sca-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+}
+
+/* ===== Action Dialog Styles ===== */
+.simbuls-creature-aide.action-dialog {
+    min-height: 280px;
+    min-width: 530px;
+}
+
+.simbuls-creature-aide .sca-action-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.5rem;
+}
+
+.simbuls-creature-aide .sca-combatant-row {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 0.5rem;
+    background: var(--color-bg-option, rgba(0, 0, 0, 0.1));
+    border-radius: var(--sca-border-radius);
+}
+
+.simbuls-creature-aide .sca-combatant-img {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80px;
+    flex-shrink: 0;
+}
+
+.simbuls-creature-aide .sca-combatant-img img {
+    width: 64px;
+    height: 64px;
+    border: 2px solid var(--sca-border);
+    border-radius: var(--sca-border-radius);
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.simbuls-creature-aide .sca-combatant-img img:hover {
+    border-color: var(--color-border-highlight, #ffcc00);
+}
+
+.simbuls-creature-aide .sca-combatant-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--sca-text-primary);
+    margin-top: 0.25rem;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.simbuls-creature-aide .sca-action-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.simbuls-creature-aide .sca-action-item {
+    position: relative;
+}
+
+.simbuls-creature-aide .sca-action-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background: var(--sca-button-bg);
+    border: 1px solid var(--sca-border);
+    border-radius: var(--sca-border-radius);
+    color: var(--sca-text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.simbuls-creature-aide .sca-action-button:hover:not(:disabled) {
+    background: var(--sca-button-hover);
+    border-color: var(--color-border-highlight, #ffcc00);
+}
+
+.simbuls-creature-aide .sca-action-button:active:not(:disabled) {
+    background: var(--sca-button-active);
+}
+
+.simbuls-creature-aide .sca-action-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.simbuls-creature-aide .sca-action-icon {
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.simbuls-creature-aide .sca-action-name {
+    flex: 1;
+    font-weight: 500;
+}
+
+.simbuls-creature-aide .sca-action-cost {
+    font-size: 0.8em;
+    color: var(--sca-text-secondary);
+}
+
+
+/* ===== Settings Dialog Styles ===== */
+.simbuls-creature-aide.sca-settings {
+    min-width: 550px;
+}
+
+.simbuls-creature-aide .sca-settings-content {
+    padding: 0.5rem;
+}
+
+.simbuls-creature-aide .sca-tab-hint {
+    font-style: italic;
+    color: var(--sca-text-secondary);
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: var(--color-bg-option, rgba(0, 0, 0, 0.1));
+    border-radius: var(--sca-border-radius);
+}
+
+.simbuls-creature-aide .sca-settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.simbuls-creature-aide .sca-settings-list .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background: var(--color-bg-option, rgba(0, 0, 0, 0.05));
+    border-radius: var(--sca-border-radius);
+}
+
+.simbuls-creature-aide .sca-settings-list .form-group label {
+    font-weight: 600;
+    color: var(--sca-text-primary);
+}
+
+.simbuls-creature-aide .sca-settings-list .form-group .notes {
+    font-size: 0.85rem;
+    color: var(--sca-text-secondary);
+    margin: 0;
+}
+
+.simbuls-creature-aide .sca-settings-list .form-group.submenu {
+    padding: 0;
+    background: none;
+}
+
+.simbuls-creature-aide .sca-settings-list .form-group.submenu button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--sca-button-bg);
+    border: 1px solid var(--sca-border);
+    border-radius: var(--sca-border-radius);
+    color: var(--sca-text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.simbuls-creature-aide .sca-settings-list .form-group.submenu button:hover {
+    background: var(--sca-button-hover);
+}
+
+/* ===== Legacy Compatibility Styles ===== */
+/* These maintain backward compatibility with any remaining athenaeum styles */
+.simbuls-athenaeum .container {
+    flex: 1;
+    width: 100%;
+    height: auto;
+}
+
+.simbuls-athenaeum .row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
+.simbuls-athenaeum .row > div {
+    flex: 1;
+}
+
+.simbuls-athenaeum .col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
+.athenaeum-setting-pad {
+    padding: 5px;
+}
+
+.athenaeum-tab-pad {
+    padding-top: 5px;
+}
+
+.settings-footer {
+    max-height: 34px;
+}
+
+/* ===== Responsive adjustments ===== */
+@media (max-width: 600px) {
+    .simbuls-creature-aide .sca-combatant-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .simbuls-creature-aide .sca-combatant-img {
+        flex-direction: row;
+        width: 100%;
+        justify-content: flex-start;
+        gap: 0.5rem;
+    }
+
+    .simbuls-creature-aide .sca-combatant-img img {
+        width: 48px;
+        height: 48px;
+    }
+
+    .simbuls-creature-aide .sca-combatant-name {
+        max-width: none;
+    }
+}

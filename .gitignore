@@ -1,0 +1,5 @@
+/simbuls-creature-aide.lock
+/.idea/
+/.claude/settings.local.json
+/node_modules/
+/dist/*.js.map

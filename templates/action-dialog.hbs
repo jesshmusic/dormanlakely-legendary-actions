@@ -1,0 +1,38 @@
+<div class="dla-action-container">
+  {{#each combatants as |combatant|}}
+  <div class="dla-combatant-row">
+    <div class="dla-combatant-img">
+      <img src="{{combatant.img}}"
+           title="{{combatant.name}}"
+           alt="{{combatant.name}}"
+           data-action="focusToken"
+           data-combatant-id="{{combatant.id}}">
+      <span class="dla-combatant-name">{{combatant.name}}</span>
+    </div>
+    {{#each combatant.items}}
+      {{#if this}}
+        <div class="dla-action-column">
+          {{#each this}}
+            <div class="dla-action-item">
+              <div class="dla-action-tooltip-src" hidden>{{{this.description}}}</div>
+              <button type="button"
+                      class="dla-action-button"
+                      data-action="useItem"
+                      data-uuid="{{this.uuid}}"
+                      {{#unless this.activation.canUse}}disabled{{/unless}}>
+                {{#if this.img}}
+                <img src="{{this.img}}" alt="{{this.name}}" class="dla-action-icon">
+                {{/if}}
+                <span class="dla-action-name">{{this.name}}</span>
+                {{#if this.activation.availableMax}}
+                <span class="dla-action-cost">[{{this.activation.available}}/{{this.activation.availableMax}}]</span>
+                {{/if}}
+              </button>
+            </div>
+          {{/each}}
+        </div>
+      {{/if}}
+    {{/each}}
+  </div>
+  {{/each}}
+</div>

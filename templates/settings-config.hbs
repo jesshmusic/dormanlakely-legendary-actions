@@ -1,0 +1,54 @@
+<div class="dla-settings-content">
+    {{#each tabData as |data tabName|}}
+    <div class="tab" data-tab="{{tabName}}" data-group="primary">
+        {{#if data.hint}}
+        <p class="dla-tab-hint">{{localize data.hint}}</p>
+        {{/if}}
+
+        <div class="dla-settings-list">
+            {{#each data.settings}}
+            <div class="form-group">
+                <label>{{this.name}}</label>
+                <div class="form-fields">
+                    {{#if this.isCheckbox}}
+                    <input type="checkbox" name="{{this.path}}" {{checked this.value}}>
+
+                    {{else if this.isSelect}}
+                    <select name="{{this.path}}">
+                        {{#each this.choices as |name k|}}
+                        <option value="{{k}}" {{#if (eq ../value k)}}selected{{/if}}>{{localize name}}</option>
+                        {{/each}}
+                    </select>
+
+                    {{else if this.isRange}}
+                    <input type="range"
+                           name="{{this.path}}"
+                           value="{{this.value}}"
+                           min="{{this.range.min}}"
+                           max="{{this.range.max}}"
+                           step="{{this.range.step}}">
+                    <span class="range-value">{{this.value}}</span>
+
+                    {{else}}
+                    <input type="text" name="{{this.path}}" value="{{this.value}}">
+                    {{/if}}
+                </div>
+
+                {{#if this.hint}}
+                <p class="notes">{{this.hint}}</p>
+                {{/if}}
+            </div>
+            {{/each}}
+
+            {{#each data.menus}}
+            <div class="form-group submenu">
+                <button type="button" data-action="openSubMenu" data-key="{{this.name}}">
+                    {{#if this.icon}}<i class="{{this.icon}}"></i>{{/if}}
+                    <label>{{localize this.label}}</label>
+                </button>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    {{/each}}
+</div>
