@@ -147,7 +147,6 @@ describe("LegendaryActionManagement._updateCombat", () => {
             find: (fn) => [mockGM].find(fn as (u: typeof mockGM) => boolean),
         };
         vi.spyOn(LegendaryActionManagement, "showLegendaryActions").mockImplementation(() => {});
-        vi.spyOn(LegendaryActionManagement, "rechargeLegendaryActions").mockImplementation(() => {});
     });
 
     it("bails when not GM", () => {
@@ -198,39 +197,4 @@ describe("LegendaryActionManagement._updateCombat", () => {
         );
     });
 
-    it("calls rechargeLegendaryActions for the previous combatant", () => {
-        const c1 = makeMockCombatant("c1", true, 3, 3, 50);
-        const c2 = makeMockCombatant("c2", true, 1, 3, 50); // needs recharge
-        const combat = makeMockCombat([c1, c2], "c2");
-
-        LegendaryActionManagement._updateCombat(combat, { turn: 1 });
-
-        expect(LegendaryActionManagement.rechargeLegendaryActions).toHaveBeenCalledWith(c2);
-    });
-});
-
-describe("LegendaryActionManagement.rechargeLegendaryActions", () => {
-    beforeEach(() => {
-        vi.restoreAllMocks();
-        vi.clearAllMocks();
-    });
-
-    it("posts notification and queues update when legact.value < max", () => {
-        const combatant = makeMockCombatant("c1", true, 1, 3, 50);
-        LegendaryActionManagement.rechargeLegendaryActions(combatant);
-        expect(ui.notifications.info).toHaveBeenCalled();
-    });
-
-    it("does nothing when legact is already at max", () => {
-        const combatant = makeMockCombatant("c1", true, 3, 3, 50);
-        LegendaryActionManagement.rechargeLegendaryActions(combatant);
-        expect(ui.notifications.info).not.toHaveBeenCalled();
-    });
-
-    it("does nothing when combatant has no actor", () => {
-        const combatant = makeMockCombatant("c1", true, 1, 3, 50);
-        (combatant as unknown as { actor: null }).actor = null as unknown as Actor;
-        LegendaryActionManagement.rechargeLegendaryActions(combatant);
-        expect(ui.notifications.info).not.toHaveBeenCalled();
-    });
 });

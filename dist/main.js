@@ -73,194 +73,6 @@ class HELPER {
     });
   }
 }
-const { ApplicationV2: ApplicationV2$1, HandlebarsApplicationMixin: HandlebarsApplicationMixin$1 } = foundry.applications.api;
-class HelpersSettingsConfig extends HandlebarsApplicationMixin$1(ApplicationV2$1) {
-  subModule;
-  subMenuId;
-  groupLabels;
-  parentMenu;
-  constructor(options = {}) {
-    super(options);
-    this.subModule = options.subModule ?? null;
-    this.subMenuId = options.subMenuId ?? null;
-    this.groupLabels = options.groupLabels ?? HelpersSettingsConfig.defaultGroupLabels;
-    this.parentMenu = options.parentMenu ?? null;
-  }
-  static _menus = /* @__PURE__ */ new Map();
-  static get menus() {
-    return HelpersSettingsConfig._menus;
-  }
-  get menus() {
-    return HelpersSettingsConfig.menus;
-  }
-  static DEFAULT_OPTIONS = {
-    id: "dla-settings",
-    classes: ["dormanlakely-legendary-actions", "dla-settings"],
-    tag: "form",
-    window: {
-      title: "DLA.ConfigApp.title",
-      icon: "fa-solid fa-cog",
-      resizable: true
-    },
-    position: {
-      width: 600,
-      height: "auto"
-    },
-    form: {
-      handler: HelpersSettingsConfig.#onSubmit,
-      closeOnSubmit: true
-    },
-    actions: {
-      openSubMenu: HelpersSettingsConfig.#onOpenSubMenu,
-      returnToParent: HelpersSettingsConfig.#onReturnToParent
-    }
-  };
-  static PARTS = {
-    tabs: {
-      template: "templates/generic/tab-navigation.hbs"
-    },
-    content: {
-      template: "modules/dormanlakely-legendary-actions/templates/settings-config.hbs",
-      scrollable: [".dla-settings-content"]
-    },
-    footer: {
-      template: "templates/generic/form-footer.hbs"
-    }
-  };
-  static TABS = {
-    primary: {
-      legendary: {
-        id: "legendary",
-        group: "primary",
-        icon: "fas fa-paw",
-        label: "DLA.groupLabel.legendary"
-      }
-    }
-  };
-  static get defaultGroupLabels() {
-    return {
-      legendary: { faIcon: "fas fa-paw", tabLabel: "DLA.groupLabel.legendary" },
-      misc: { faIcon: "fas fa-cog", tabLabel: "DLA.groupLabel.misc" }
-    };
-  }
-  get title() {
-    return HELPER.format("DLA.ConfigApp.title");
-  }
-  _configureRenderOptions(options) {
-    super._configureRenderOptions(options);
-    if (this.tabGroups["primary"]) options["parts"] = ["tabs", "content", "footer"];
-  }
-  async _prepareContext(options) {
-    const context = await super._prepareContext(options);
-    const canConfigure = game.user.can("SETTING_MODIFY") || game.user.can("SETTINGS_MODIFY");
-    context["tabs"] = this._prepareTabs();
-    context["tabData"] = this._prepareTabData(canConfigure);
-    context["hasParent"] = !!this.subMenuId;
-    context["parentMenu"] = this.parentMenu;
-    context["canConfigure"] = canConfigure;
-    context["systemTitle"] = game.system.title;
-    context["buttons"] = [
-      { type: "submit", icon: "far fa-save", label: HELPER.localize("SETTINGS.Save") }
-    ];
-    return context;
-  }
-  _prepareTabs() {
-    const tabs = {};
-    for (const [key, tab] of Object.entries(HelpersSettingsConfig.TABS.primary)) {
-      tabs[key] = {
-        ...tab,
-        active: this.tabGroups["primary"] === key,
-        cssClass: this.tabGroups["primary"] === key ? "active" : ""
-      };
-    }
-    return tabs;
-  }
-  _prepareTabData(canConfigure) {
-    const settings = Array.from(game.settings.settings);
-    const tabData = {};
-    for (const [tabName, tabConfig] of Object.entries(this.groupLabels)) {
-      tabData[tabName] = { ...tabConfig, settings: [], menus: [] };
-    }
-    for (const [, setting] of settings.filter(
-      ([, s]) => s.namespace === MODULE.data.name
-    )) {
-      const s = setting;
-      if (!s.config) {
-        if (!canConfigure && s.scope !== "client") continue;
-        const groupName = tabData[s.group ?? ""] ? s.group ?? "" : "misc";
-        if (!tabData[groupName]) continue;
-        tabData[groupName].settings.push({
-          ...s,
-          type: s.type instanceof Function ? s.type.name : "String",
-          isCheckbox: s.type === Boolean,
-          isSelect: s.choices !== void 0,
-          isRange: s.type === Number && !!s.range,
-          value: HELPER.setting(MODULE.data.name, s.key),
-          path: `${s.namespace}.${s.key}`
-        });
-      }
-    }
-    const childMenus = [...this.menus.values()].filter(
-      (menu) => menu.parentMenu === this.subMenuId
-    );
-    childMenus.forEach((menu) => {
-      if (menu.tab && tabData[menu.tab]) {
-        tabData[menu.tab].menus.push(menu);
-      }
-    });
-    for (const [tabName, data] of Object.entries(tabData)) {
-      if (data.settings.length === 0 && data.menus.length === 0) {
-        delete tabData[tabName];
-      }
-    }
-    logger.debug(
-      game.settings.get(MODULE.data.name, "debug"),
-      `${MODULE.data.name} | Settings Config | Tab Data:`,
-      tabData
-    );
-    return tabData;
-  }
-  async _preparePartContext(partId, context) {
-    context = await super._preparePartContext(partId, context);
-    if (partId === "tabs") {
-      context["tabs"] = Object.values(context["tabs"]);
-    }
-    return context;
-  }
-  static async #onSubmit(_event, _form, formData) {
-    const fd = foundry.utils.expandObject(formData.object);
-    for (const [namespace, settings] of Object.entries(fd)) {
-      for (const [key, value] of Object.entries(settings)) {
-        try {
-          await game.settings.set(namespace, key, value);
-        } catch (e) {
-          logger.error(MODULE.data.name, `Failed to save setting ${namespace}.${key}:`, e);
-        }
-      }
-    }
-    ui.notifications.info(
-      HELPER.localize("SETTINGS.Save") + " - " + HELPER.localize("DLA.ConfigApp.title")
-    );
-  }
-  static async #onOpenSubMenu(_event, target) {
-    const menuKey = target.dataset["key"];
-    if (!menuKey) return;
-    const menu = this.menus.get(menuKey);
-    if (menu) {
-      const app = new menu.type(menu.options);
-      app.render(true);
-    }
-  }
-  static async #onReturnToParent(_event, _target) {
-    const menu = game.settings.menus.get("dormanlakely-legendary-actions.helperOptions");
-    if (!menu) {
-      ui.notifications.error("No parent menu found");
-      return;
-    }
-    const app = new menu.type();
-    app.render(true);
-  }
-}
 const NAME$1 = "dormanlakely-legendary-actions";
 const PATH = `/modules/${NAME$1}`;
 const TITLE = "Dorman Lakely's Legendary Actions";
@@ -269,7 +81,6 @@ class MODULE {
   static async register() {
     logger.info(NAME$1, "Initializing Module");
     MODULE.globals();
-    MODULE.settings();
     MODULE.debugSettings();
   }
   static async build() {
@@ -277,15 +88,6 @@ class MODULE {
   }
   static globals() {
     game.dnd5e.npcactions = {};
-  }
-  static settings() {
-    game.settings.registerMenu(MODULE.data.name, "helperOptions", {
-      name: HELPER.format("setting.ConfigOption.name"),
-      label: HELPER.format("setting.ConfigOption.label"),
-      icon: "fas fa-user-cog",
-      type: HelpersSettingsConfig,
-      restricted: false
-    });
   }
   static debugSettings() {
     const config = true;
@@ -542,20 +344,11 @@ class LegendaryActionManagement {
   }
   /** @public */
   static settings() {
-    const config = false;
     const settingsData = {
-      legendaryActionRecharge: {
-        scope: "world",
-        config,
-        group: "legendary",
-        default: false,
-        type: Boolean
-      },
       legendaryActionHelper: {
         scope: "world",
-        config,
-        group: "legendary",
-        default: false,
+        config: true,
+        default: true,
         type: Boolean
       }
     };
@@ -610,42 +403,10 @@ class LegendaryActionManagement {
         LegendaryActionManagement.showLegendaryActions(legendaryCombatants);
       }
     }
-    if (HELPER.setting(MODULE.data.name, "legendaryActionRecharge")) {
-      if (previousId) {
-        const previousCombatant = combat.combatants.get(previousId);
-        if (previousCombatant?.getFlag(MODULE.data.name, "hasLegendary")) {
-          LegendaryActionManagement.rechargeLegendaryActions(previousCombatant);
-        }
-      }
-    }
   }
   /** @private */
   static showLegendaryActions(combatants) {
     new LegendaryActionDialog(combatants).render(true);
-  }
-  /** @private */
-  static rechargeLegendaryActions(combatant) {
-    if (!combatant.actor || !combatant.token) return;
-    const legact = foundry.utils.getProperty(
-      combatant.actor,
-      "system.resources.legact"
-    );
-    if (legact && legact.value !== null) {
-      if (legact.value < legact.max) {
-        ui.notifications.info(
-          game.i18n.format("DLA.CombatLegendary_notification", {
-            max: legact.max,
-            tokenName: combatant.token.name
-          })
-        );
-        queueUpdate(async () => {
-          const newActor = await combatant.actor.update({
-            "system.resources.legact.value": legact.max
-          });
-          newActor.sheet.render(false);
-        });
-      }
-    }
   }
 }
 const SUB_MODULES = {
@@ -653,6 +414,22 @@ const SUB_MODULES = {
   LegendaryActionManagement
 };
 MODULE.build();
+Hooks.once("init", () => {
+  const moduleData = game.modules.get(MODULE.data.name);
+  const version = moduleData?.version ?? "0.0.0";
+  console.log(
+    "%c⚔️ Dorman Lakely's Legendary Actions %cv" + version,
+    "color: #d32f2f; font-weight: bold; font-size: 16px;",
+    "color: #ff9800; font-weight: bold; font-size: 14px;"
+  );
+});
+Hooks.once("ready", () => {
+  console.log(
+    "%c⚔️ Dorman Lakely's Legendary Actions %c✓ Ready!",
+    "color: #d32f2f; font-weight: bold; font-size: 16px;",
+    "color: #4caf50; font-weight: bold; font-size: 14px;"
+  );
+});
 Hooks.on("setup", () => {
   Object.values(SUB_MODULES).forEach((cl) => cl.register());
   Hooks.callAll("npcactionsReady", { MODULE, logger });

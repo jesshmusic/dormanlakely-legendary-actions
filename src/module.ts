@@ -1,6 +1,5 @@
 import { logger } from './utils/logger.js';
 import { HELPER } from './utils/helper.js';
-import { HelpersSettingsConfig } from './apps/SettingsConfig.js';
 
 const NAME = "dormanlakely-legendary-actions";
 const PATH = `/modules/${NAME}`;
@@ -21,7 +20,6 @@ export class MODULE {
     static async register(): Promise<void> {
         logger.info(NAME, "Initializing Module");
         MODULE.globals();
-        MODULE.settings();
         MODULE.debugSettings();
     }
 
@@ -31,16 +29,6 @@ export class MODULE {
 
     static globals(): void {
         game.dnd5e.npcactions = {};
-    }
-
-    static settings(): void {
-        game.settings.registerMenu(MODULE.data.name, "helperOptions", {
-            name: HELPER.format("setting.ConfigOption.name"),
-            label: HELPER.format("setting.ConfigOption.label"),
-            icon: "fas fa-user-cog",
-            type: HelpersSettingsConfig,
-            restricted: false,
-        });
     }
 
     static debugSettings(): void {
