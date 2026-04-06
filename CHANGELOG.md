@@ -1,4 +1,4 @@
-# v 1.1.0 — 2026-04-06
+# v 2.1.0 — 2026-04-06
 
 ## Foundry v14 + dnd5e 5.3 Compatibility
 
