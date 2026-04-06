@@ -4,6 +4,7 @@
 
 ### Compatibility
 * **Foundry VTT v14 verified** — bumped `compatibility.verified` to `14`.
+* **Minimum Foundry version bumped to `14`**. Earlier versions of this module remain available for v13 users from the GitHub releases page; this version is v14-only by design.
 * **dnd5e 5.3 verified** — bumped `relationships.systems.dnd5e.compatibility.verified` to `5.3.0`.
 
 ### Improvements
