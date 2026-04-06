@@ -230,13 +230,21 @@ export class ActionDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         const item = doc as Item;
 
         const actor = item.actor;
-        const legendaryActivity = item.system.activities?.contents?.find(
+        const legendaryActivity = item.system?.activities?.contents?.find(
             (a) => a.activation?.type === "legendary"
         );
         const legactSpentBefore =
             (foundry.utils.getProperty(actor, "system.resources.legact.spent") as number) ?? 0;
 
-        await item.use({ event: event as Event });
+        // Prefer Activity.use() over Item.use() when we have the matched legendary
+        // activity — Item.use() shows a picker if the item has multiple activities
+        // (e.g. an action that's also a legendary action), which would block the
+        // legendary flow. dnd5e 5.x: activity.use(usageConfig, dialogConfig, messageConfig).
+        if (legendaryActivity && typeof (legendaryActivity as any).use === "function") {
+            await (legendaryActivity as any).use({ event });
+        } else {
+            await item.use({ event: event as Event });
+        }
 
         if (legendaryActivity) {
             const legactSpentAfter =
