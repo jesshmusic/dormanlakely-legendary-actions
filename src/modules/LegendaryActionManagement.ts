@@ -46,8 +46,13 @@ export class LegendaryActionManagement {
         if (!HELPER.isFirstGM()) return;
 
         const hasLegendary = !!combatant.actor?.items.find((i) => {
-            if (i.system?.activities?.size) {
-                return i.system.activities.some((a) => a.activation?.type === "legendary");
+            // dnd5e 5.x: activities is a Foundry Collection. .size and .some() exist on
+            // Collections. Spells imported from DDB/MM also expose activation.type at the
+            // item level — filter spells out so we don't double-count them with their feat wrapper.
+            if (i.type === "spell") return false;
+            const activities = i.system?.activities;
+            if (activities?.size) {
+                return activities.some((a) => a.activation?.type === "legendary");
             }
             return i.system?.activation?.type === "legendary";
         });

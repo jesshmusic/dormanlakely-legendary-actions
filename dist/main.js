@@ -238,11 +238,15 @@ class ActionDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!doc || !doc.actor) return;
     const item = doc;
     const actor = item.actor;
-    const legendaryActivity = item.system.activities?.contents?.find(
+    const legendaryActivity = item.system?.activities?.contents?.find(
       (a) => a.activation?.type === "legendary"
     );
     const legactSpentBefore = foundry.utils.getProperty(actor, "system.resources.legact.spent") ?? 0;
-    await item.use({ event });
+    if (legendaryActivity && typeof legendaryActivity.use === "function") {
+      await legendaryActivity.use({ event });
+    } else {
+      await item.use({ event });
+    }
     if (legendaryActivity) {
       const legactSpentAfter = foundry.utils.getProperty(actor, "system.resources.legact.spent") ?? 0;
       if (legactSpentAfter === legactSpentBefore) {
@@ -365,8 +369,10 @@ class LegendaryActionManagement {
   static _createCombatant(combatant) {
     if (!HELPER.isFirstGM()) return;
     const hasLegendary = !!combatant.actor?.items.find((i) => {
-      if (i.system?.activities?.size) {
-        return i.system.activities.some((a) => a.activation?.type === "legendary");
+      if (i.type === "spell") return false;
+      const activities = i.system?.activities;
+      if (activities?.size) {
+        return activities.some((a) => a.activation?.type === "legendary");
       }
       return i.system?.activation?.type === "legendary";
     });
