@@ -102,7 +102,7 @@ class PatreonLink extends ApplicationV2$1 {
       ok: {
         label: '<i class="fab fa-patreon"></i> Visit Patreon',
         callback: () => {
-          window.open("https://patreon.com/jesshmusic", "_blank", "noopener,noreferrer");
+          window.open("https://www.patreon.com/c/DormanLakely", "_blank", "noopener,noreferrer");
         }
       }
     });
