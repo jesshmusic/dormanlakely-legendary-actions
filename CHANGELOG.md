@@ -1,3 +1,10 @@
+# v 2.1.1 — 2026-04-08
+
+## DM Guru branding
+
+### Added
+* Branded `dungeonmaster.guru` cross-promotion card in the Legendary Actions dialog, using the DM Guru logo and brand palette. Styles live in `styles/legendary-actions.css` scoped under `.dormanlakely-legendary-actions`.
+
 # v 2.1.0 — 2026-04-06
 
 ## Foundry v14 + dnd5e 5.3 Compatibility
@@ -60,3 +67,9 @@ This release brings full compatibility with Foundry VTT v13 and removes the depe
 # v 1.0.0
 
 * Initial release.
+
+## [2.1.1] - 2026-04-08
+
+### Added
+
+- Branded `dungeonmaster.guru` cross-promotion card in the Legendary Actions dialog, using the DM Guru logo and brand palette. Styles live in `styles/legendary-actions.css` scoped under `.dormanlakely-legendary-actions`.
