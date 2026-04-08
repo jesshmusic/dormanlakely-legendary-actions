@@ -76,8 +76,7 @@ class HELPER {
 const NAME$1 = "dormanlakely-legendary-actions";
 const PATH = `/modules/${NAME$1}`;
 const TITLE = "Dorman Lakely's Legendary Actions";
-const { ApplicationV2: ApplicationV2$1, DialogV2 } = foundry.applications.api;
-class PatreonLink extends ApplicationV2$1 {
+class PatreonLink extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: "dormanlakely-legendary-actions-patreon",
     classes: [],
@@ -88,28 +87,28 @@ class PatreonLink extends ApplicationV2$1 {
     },
     position: { width: 1, height: 1 }
   };
-  async _renderHTML() {
-    return document.createElement("div");
-  }
-  _replaceHTML(result, content) {
-    content.replaceChildren(result);
-  }
-  async _onFirstRender(_context, _options) {
-    this.element?.style?.setProperty("display", "none");
-    await DialogV2.prompt({
+  _onRender(_context, _options) {
+    if (this.element) this.element.style.display = "none";
+    void foundry.applications.api.DialogV2.wait({
       window: { title: "Support on Patreon" },
       content: "<p>Open the Patreon page in a new tab.</p>",
-      ok: {
-        label: '<i class="fab fa-patreon"></i> Visit Patreon',
-        callback: () => {
-          window.open("https://www.patreon.com/c/DormanLakely", "_blank", "noopener,noreferrer");
+      buttons: [
+        {
+          action: "ok",
+          label: '<i class="fab fa-patreon"></i> Visit Patreon',
+          callback: () => {
+            window.open(
+              "https://www.patreon.com/c/DormanLakely",
+              "_blank",
+              "noopener,noreferrer"
+            );
+          }
         }
-      }
-    });
-    this.close();
+      ]
+    }).then(() => this.close());
   }
 }
-class DmGuruLink extends ApplicationV2$1 {
+class DmGuruLink extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: "dormanlakely-legendary-actions-dmguru",
     classes: [],
@@ -120,25 +119,25 @@ class DmGuruLink extends ApplicationV2$1 {
     },
     position: { width: 1, height: 1 }
   };
-  async _renderHTML() {
-    return document.createElement("div");
-  }
-  _replaceHTML(result, content) {
-    content.replaceChildren(result);
-  }
-  async _onFirstRender(_context, _options) {
-    this.element?.style?.setProperty("display", "none");
-    await DialogV2.prompt({
+  _onRender(_context, _options) {
+    if (this.element) this.element.style.display = "none";
+    void foundry.applications.api.DialogV2.wait({
       window: { title: "Dungeon Master Guru" },
       content: "<p>Open the Dungeon Master Guru site in a new tab.</p>",
-      ok: {
-        label: '<i class="fas fa-dragon"></i> Visit Dungeon Master Guru',
-        callback: () => {
-          window.open("https://dungeonmaster.guru", "_blank", "noopener,noreferrer");
+      buttons: [
+        {
+          action: "ok",
+          label: '<i class="fas fa-dragon"></i> Visit Dungeon Master Guru',
+          callback: () => {
+            window.open(
+              "https://dungeonmaster.guru",
+              "_blank",
+              "noopener,noreferrer"
+            );
+          }
         }
-      }
-    });
-    this.close();
+      ]
+    }).then(() => this.close());
   }
 }
 class MODULE {
@@ -166,6 +165,12 @@ class MODULE {
     };
     MODULE.applySettings(settingsData);
   }
+  // Tracks whether the one-time submenu registrations (Patreon / DM Guru)
+  // have already run. `applySettings` is called from multiple places
+  // (`debugSettings`, `LegendaryActionManagement.settings`) and each call
+  // would otherwise attempt to re-register the same menus, which Foundry
+  // treats as a fatal error.
+  static _submenusRegistered = false;
   static applySettings(settingsData) {
     Object.entries(settingsData).forEach(([key, data]) => {
       game.settings.register(MODULE.data.name, key, {
@@ -174,6 +179,8 @@ class MODULE {
         ...data
       });
     });
+    if (MODULE._submenusRegistered) return;
+    MODULE._submenusRegistered = true;
     game.settings.registerMenu(MODULE.data.name, "patreonLink", {
       name: "Support on Patreon",
       label: "Visit Patreon",
