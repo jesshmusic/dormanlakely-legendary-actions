@@ -1,3 +1,15 @@
+# v 2.1.1 — 2026-04-08
+
+## DM Guru branding
+
+### Added
+* New Settings menu entries for **Patreon** and **Dungeon Master Guru**, making both support/resources links directly accessible from the module's configuration menu. Each entry opens a small DialogV2 prompt with a "Visit" button that opens the target URL in a new tab.
+* `applySettings` is now idempotent — the new `patreonLink` / `dmGuruLink` submenus are registered only once, even though `applySettings` is called from multiple entry points (`debugSettings`, `LegendaryActionManagement.settings`).
+
+### Fixes
+* Align Patreon URL to `https://www.patreon.com/c/DormanLakely` (matches the rest of the Dorman Lakely module suite).
+* Settings-menu ApplicationV2 subclasses now use the repo's declared `foundry.applications.api` types and `DialogV2.wait` (matching the rest of the codebase) instead of `(foundry as any)` casts and `DialogV2.prompt`.
+
 # v 2.1.0 — 2026-04-06
 
 ## Foundry v14 + dnd5e 5.3 Compatibility
@@ -60,3 +72,4 @@ This release brings full compatibility with Foundry VTT v13 and removes the depe
 # v 1.0.0
 
 * Initial release.
+

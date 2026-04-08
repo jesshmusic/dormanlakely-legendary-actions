@@ -76,6 +76,70 @@ class HELPER {
 const NAME$1 = "dormanlakely-legendary-actions";
 const PATH = `/modules/${NAME$1}`;
 const TITLE = "Dorman Lakely's Legendary Actions";
+class PatreonLink extends foundry.applications.api.ApplicationV2 {
+  static DEFAULT_OPTIONS = {
+    id: "dormanlakely-legendary-actions-patreon",
+    classes: [],
+    tag: "div",
+    window: {
+      title: "Support on Patreon",
+      icon: "fab fa-patreon"
+    },
+    position: { width: 1, height: 1 }
+  };
+  _onRender(_context, _options) {
+    if (this.element) this.element.style.display = "none";
+    void foundry.applications.api.DialogV2.wait({
+      window: { title: "Support on Patreon" },
+      content: "<p>Open the Patreon page in a new tab.</p>",
+      buttons: [
+        {
+          action: "ok",
+          label: '<i class="fab fa-patreon"></i> Visit Patreon',
+          callback: () => {
+            window.open(
+              "https://www.patreon.com/c/DormanLakely",
+              "_blank",
+              "noopener,noreferrer"
+            );
+          }
+        }
+      ]
+    }).then(() => this.close());
+  }
+}
+class DmGuruLink extends foundry.applications.api.ApplicationV2 {
+  static DEFAULT_OPTIONS = {
+    id: "dormanlakely-legendary-actions-dmguru",
+    classes: [],
+    tag: "div",
+    window: {
+      title: "Dungeon Master Guru",
+      icon: "fas fa-dragon"
+    },
+    position: { width: 1, height: 1 }
+  };
+  _onRender(_context, _options) {
+    if (this.element) this.element.style.display = "none";
+    void foundry.applications.api.DialogV2.wait({
+      window: { title: "Dungeon Master Guru" },
+      content: "<p>Open the Dungeon Master Guru site in a new tab.</p>",
+      buttons: [
+        {
+          action: "ok",
+          label: '<i class="fas fa-dragon"></i> Visit Dungeon Master Guru',
+          callback: () => {
+            window.open(
+              "https://dungeonmaster.guru",
+              "_blank",
+              "noopener,noreferrer"
+            );
+          }
+        }
+      ]
+    }).then(() => this.close());
+  }
+}
 class MODULE {
   static data;
   static async register() {
@@ -101,6 +165,12 @@ class MODULE {
     };
     MODULE.applySettings(settingsData);
   }
+  // Tracks whether the one-time submenu registrations (Patreon / DM Guru)
+  // have already run. `applySettings` is called from multiple places
+  // (`debugSettings`, `LegendaryActionManagement.settings`) and each call
+  // would otherwise attempt to re-register the same menus, which Foundry
+  // treats as a fatal error.
+  static _submenusRegistered = false;
   static applySettings(settingsData) {
     Object.entries(settingsData).forEach(([key, data]) => {
       game.settings.register(MODULE.data.name, key, {
@@ -108,6 +178,24 @@ class MODULE {
         hint: HELPER.localize(`setting.${key}.hint`),
         ...data
       });
+    });
+    if (MODULE._submenusRegistered) return;
+    MODULE._submenusRegistered = true;
+    game.settings.registerMenu(MODULE.data.name, "patreonLink", {
+      name: "Support on Patreon",
+      label: "Visit Patreon",
+      hint: "Support the development of this module on Patreon! Your contributions help fund new features and updates.",
+      icon: "fab fa-patreon",
+      type: PatreonLink,
+      restricted: false
+    });
+    game.settings.registerMenu(MODULE.data.name, "dmGuruLink", {
+      name: "Dungeon Master Guru",
+      label: "Visit Dungeon Master Guru",
+      hint: "SRD rules and DM tools. Free resources for Dungeon Masters at dungeonmaster.guru.",
+      icon: "fas fa-dragon",
+      type: DmGuruLink,
+      restricted: false
     });
   }
 }
