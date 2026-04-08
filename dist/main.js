@@ -76,6 +76,71 @@ class HELPER {
 const NAME$1 = "dormanlakely-legendary-actions";
 const PATH = `/modules/${NAME$1}`;
 const TITLE = "Dorman Lakely's Legendary Actions";
+const { ApplicationV2: ApplicationV2$1, DialogV2 } = foundry.applications.api;
+class PatreonLink extends ApplicationV2$1 {
+  static DEFAULT_OPTIONS = {
+    id: "dormanlakely-legendary-actions-patreon",
+    classes: [],
+    tag: "div",
+    window: {
+      title: "Support on Patreon",
+      icon: "fab fa-patreon"
+    },
+    position: { width: 1, height: 1 }
+  };
+  async _renderHTML() {
+    return document.createElement("div");
+  }
+  _replaceHTML(result, content) {
+    content.replaceChildren(result);
+  }
+  async _onFirstRender(_context, _options) {
+    this.element?.style?.setProperty("display", "none");
+    await DialogV2.prompt({
+      window: { title: "Support on Patreon" },
+      content: "<p>Open the Patreon page in a new tab.</p>",
+      ok: {
+        label: '<i class="fab fa-patreon"></i> Visit Patreon',
+        callback: () => {
+          window.open("https://patreon.com/jesshmusic", "_blank", "noopener,noreferrer");
+        }
+      }
+    });
+    this.close();
+  }
+}
+class DmGuruLink extends ApplicationV2$1 {
+  static DEFAULT_OPTIONS = {
+    id: "dormanlakely-legendary-actions-dmguru",
+    classes: [],
+    tag: "div",
+    window: {
+      title: "Dungeon Master Guru",
+      icon: "fas fa-dragon"
+    },
+    position: { width: 1, height: 1 }
+  };
+  async _renderHTML() {
+    return document.createElement("div");
+  }
+  _replaceHTML(result, content) {
+    content.replaceChildren(result);
+  }
+  async _onFirstRender(_context, _options) {
+    this.element?.style?.setProperty("display", "none");
+    await DialogV2.prompt({
+      window: { title: "Dungeon Master Guru" },
+      content: "<p>Open the Dungeon Master Guru site in a new tab.</p>",
+      ok: {
+        label: '<i class="fas fa-dragon"></i> Visit Dungeon Master Guru',
+        callback: () => {
+          window.open("https://dungeonmaster.guru", "_blank", "noopener,noreferrer");
+        }
+      }
+    });
+    this.close();
+  }
+}
 class MODULE {
   static data;
   static async register() {
@@ -108,6 +173,22 @@ class MODULE {
         hint: HELPER.localize(`setting.${key}.hint`),
         ...data
       });
+    });
+    game.settings.registerMenu(MODULE.data.name, "patreonLink", {
+      name: "Support on Patreon",
+      label: "Visit Patreon",
+      hint: "Support the development of this module on Patreon! Your contributions help fund new features and updates.",
+      icon: "fab fa-patreon",
+      type: PatreonLink,
+      restricted: false
+    });
+    game.settings.registerMenu(MODULE.data.name, "dmGuruLink", {
+      name: "Dungeon Master Guru",
+      label: "Visit Dungeon Master Guru",
+      hint: "SRD rules and DM tools. Free resources for Dungeon Masters at dungeonmaster.guru.",
+      icon: "fas fa-dragon",
+      type: DmGuruLink,
+      restricted: false
     });
   }
 }
